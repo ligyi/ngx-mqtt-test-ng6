@@ -25,22 +25,35 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.observe();
-    for (let i = 0; i < 10; i++) {
-      setTimeout(() => this.observe(), i*100);
-    }
+    setTimeout(() => this.mqtt.unsafePublish('topic', 'unretained message', { retain: false, qos: 0 }), 2000);
+    setTimeout(() => this.observe(), 4000);
+    setTimeout(() => this.mqtt.unsafePublish('topic', 'retained message', { retain: true, qos: 0 }), 6000);
+
+    // this observes do not receive retained message...
+    setTimeout(() => this.observe(), 8000);
+    setTimeout(() => this.observe(), 10000);
+
+    // ...until all observations are cleared
+    setTimeout(() => {
+      this.mqttSubscriptions.forEach(s => { if (s.subscription) { s.subscription.unsubscribe(); } });
+      this.mqttSubscriptions = [];
+    }, 12000);
+
+    setTimeout(() => this.observe(), 14000);
+    setTimeout(() => this.observe(), 16000);
   }
 
   observe() {
-    let s: IMqttSubscription = {
+    const s: IMqttSubscription = {
       id: this.counter++,
       payload: null
     };
     s.subscription = this.mqtt
-      .observe("topic")
+      .observe('topic')
       .pipe(
-        map(v => { console.log(v, s.id); return v }),
+        map(v => { console.log(v, s.id); return v; }),
         map(v => v.payload),
-      )
+    )
       .subscribe(msg => { s.payload = msg; });
     this.mqttSubscriptions.push(s);
   }
