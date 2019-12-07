@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
       payload: null
     };
     s.subscription = this.mqtt
-      .observe("topic")
+      .observe("e_sensor")
       .pipe(
         map(v => { console.log(v, s.id); return v }),
         map(v => v.payload),
