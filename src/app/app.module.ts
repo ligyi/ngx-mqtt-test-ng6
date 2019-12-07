@@ -1,8 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MqttModule } from 'ngx-mqtt';
-
 import { AppComponent } from './app.component';
+import {
+  MqttModule,
+  IMqttServiceOptions
+} from 'ngx-mqtt';
+
+export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+  hostname: 'test.mosquitto.org',
+  port: 8081,
+  protocol: 'wss'
+};
 
 @NgModule({
   declarations: [
@@ -10,7 +18,7 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    MqttModule.forRoot({ hostname: 'localhost', port: 1884, connectOnCreate: true })
+    MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
   providers: [],
   bootstrap: [AppComponent]
